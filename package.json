@@ -16,6 +16,10 @@
       {
         "command": "package-assistant.helloWorld",
         "title": "Hello World"
+      },
+      {
+        "command": "package-assistant.autoInstallPackages",
+        "title": "Auto Install packages"
       }
     ]
   },
