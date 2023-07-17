@@ -3,6 +3,8 @@ const fs = require('fs');
 const { exec } = require('child_process');
 import isOpenWorkSpace from './is-open-workspace';
 import isFileExist from './is-files-exist';
+import transformPath from './transform-path';
+
 type FileInfo = {
   filePath: string,
   rootPath: string
@@ -13,8 +15,9 @@ type FileInfo = {
  */
 
 const autoInstall = async (fileInfo: FileInfo) => {
+  const path = transformPath(fileInfo.filePath);
   // 读取Package.json文件
-  const data = vscode.workspace.fs.readFile(vscode.Uri.file(fileInfo.filePath));
+  const data = await vscode.workspace.fs.readFile(vscode.Uri.file(path));
   const packageJson = JSON.parse(data.toString());
   // TODO:默认npm
   if (!packageJson.dependencies && !packageJson.devDependencies) {
@@ -39,7 +42,7 @@ const autoInstallPackages = (): vscode.Disposable => {
   return vscode.commands.registerCommand('package-assistant.autoInstallPackages', () => {
 		isOpenWorkSpace().then(async workspaceFolders => {
       return new Promise((resolve, reject) => {
-        isFileExist('node_modules', workspaceFolders)
+        isFileExist('package.json', workspaceFolders)
           .then(info => resolve(info))
           .catch(err => reject(err));
       });

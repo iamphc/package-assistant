@@ -20,6 +20,10 @@
       {
         "command": "package-assistant.autoInstallPackages",
         "title": "Auto Install packages"
+      },
+      {
+        "command": "package-assistant.execPackageJson",
+        "title": "Exec Package Json"
       }
     ]
   },
