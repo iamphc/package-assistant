@@ -1,5 +1,7 @@
 # VSCode Auto Update Dependencies Extension
 
+[![Static Badge](https://img.shields.io/badge/pacakge_assistant-v0.0.1-blue)](https://github.com/iamphc/package-assistant)
+
 ## Overview
 
 VSCode Auto Update Dependencies is a VSCode extension designed to automatically update your project dependencies. Simply modify the versions of dependencies in your project's `package.json` file, and VSCode will automatically recognize and update your `node_modules`.
