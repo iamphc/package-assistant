@@ -9,12 +9,15 @@ type FileInfo = {
   filePath: string,
   rootPath: string
 };
+type DepName = string;
+type DepVersion = string;
+export type DepTuple = [DepName, DepVersion];
 /**
  * first step this plugin:
  * find node_modules folder in current project
  */
 
-const autoInstall = async (fileInfo: FileInfo) => {
+export const autoInstall = async (fileInfo: FileInfo, depOrList?: string | (DepTuple[]), version?: string) => {
   const path = transformPath(fileInfo.filePath);
   // 读取Package.json文件
   const data = await vscode.workspace.fs.readFile(vscode.Uri.file(path));
@@ -26,34 +29,17 @@ const autoInstall = async (fileInfo: FileInfo) => {
   // 生成依赖tree
   // 安装依赖
   // 生成命令
-  const command = 'npm install';
+  const commandStr = depOrList instanceof Array ? depOrList.reduce((pre, [depName, depVersion]) => pre + `${depName}@${depVersion} `, '') : `${depOrList}@${version}`
+  const command = 'npm install ' + commandStr;
   const options = { cwd: fileInfo.rootPath };
-  exec(command, options, (error: any, stdout: any, stderr: any) => {
-    if (error) {
-      vscode.window.showErrorMessage(`安装依赖失败：${error.message}`);
-    }
-    else {
-      vscode.window.showInformationMessage('依赖安装成功！');
-    }
-  });
-};
+  exec(command, options, (error: any, stdout: any, stderr: any) => {});
 
-const autoInstallPackages = (): vscode.Disposable => {
-  return vscode.commands.registerCommand('package-assistant.autoInstallPackages', () => {
-		isOpenWorkSpace().then(async workspaceFolders => {
-      return new Promise((resolve, reject) => {
-        isFileExist('package.json', workspaceFolders)
-          .then(info => resolve(info))
-          .catch(err => reject(err));
-      });
-      // const isPackageJExsist = isFileExist('package.json', workspaceFolders);
-    }).then(fileInfo => {
-      // vscode.window.showInformationMessage(filePath as string);
-      autoInstall(fileInfo as FileInfo);
-    }).catch(err => {
-      vscode.window.showErrorMessage(err);
-    });
-	});
+  const terminal = vscode.window.createTerminal();
+  terminal.sendText(command, true);
+  terminal.show();
+  vscode.window.onDidCloseTerminal((closedTerminal) => {
+    if (closedTerminal === terminal) {
+      vscode.window.showInformationMessage('依赖安装完成!');
+    }
+});
 };
-
-export default autoInstallPackages;

@@ -9,24 +9,11 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:json"
+  ],
   "main": "./dist/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "package-assistant.helloWorld",
-        "title": "Hello World"
-      },
-      {
-        "command": "package-assistant.autoInstallPackages",
-        "title": "Auto Install packages"
-      },
-      {
-        "command": "package-assistant.execPackageJson",
-        "title": "Exec Package Json"
-      }
-    ]
-  },
+  "contributes": {},
   "scripts": {
     "vscode:prepublish": "npm run package",
     "compile": "webpack",

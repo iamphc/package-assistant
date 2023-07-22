@@ -3,20 +3,63 @@
 import * as vscode from 'vscode';
 // import findNodeModules from './utils/find-node-modules';
 // import findPackageJson from './utils/find-package-json';
-import autoInstallPackages from './utils/auto-install-packages';
-import execPackageJson from './utils/exec-package-json';
+// import autoInstallPackages from './utils/auto-install-packages';
+// import execPackageJson from './utils/exec-package-json';
+import { DepTuple, autoInstall } from './utils/auto-install-packages';
+import isOpenWorkSpace from './utils/is-open-workspace';
+import isFileExist from './utils/is-files-exist';
+const fs = require("fs");
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+type FileInfo = {
+  filePath: string,
+  rootPath: string
+};
 
-	// const disposableFindNodeModules = findNodeModules();
-	// const disposableFindPackageJson = findPackageJson();
-	const disposableAutoInstallPackages = autoInstallPackages();
-	const disposablExecPackageJson = execPackageJson();
-
-	context.subscriptions.push(disposableAutoInstallPackages, disposablExecPackageJson);
+/**
+ * 校验依赖的格式是否正确
+ * 参考：semantic versioning
+ * 参考标准网址：https://semver.org
+ * @param dependency 
+ * @returns 
+ */
+function isValidDependencyFormat(dependency: string) {
+  let regex = /^[\^\~]{0,1}([\d]+\.)+[\d]+$/;
+  return dependency === 'latest' || regex.test(dependency);
 }
 
-// This method is called when your extension is deactivated
+export function activate(context: vscode.ExtensionContext) {
+	let previousDependencies: Record<string, any> = {};
+
+  let watcher = vscode.workspace.createFileSystemWatcher("**/package.json");
+  context.subscriptions.push(watcher);
+
+  isOpenWorkSpace().then(async workspaceFolders => {
+    return new Promise((resolve, reject) => {
+      isFileExist('package.json', workspaceFolders)
+        .then(info => resolve(info))
+        .catch(err => reject(err));
+    });
+  }).then(fileInfo => {
+    watcher.onDidChange(uri => {
+      let packageJSON = JSON.parse(fs.readFileSync(uri.fsPath, 'utf8'));
+      let dependencies = Object.assign({}, packageJSON.dependencies, packageJSON.devDependencies);
+      
+      const depInstallPendingList: DepTuple[] = [];
+
+      for (let dep in dependencies) {
+        const curVersion = dependencies[dep] as string;
+        const previousVersion = previousDependencies[dep];
+        if ((curVersion !== previousVersion) && isValidDependencyFormat(curVersion)) {
+          depInstallPendingList.push([dep, curVersion]);
+        }
+      }
+
+      if (depInstallPendingList.length) {
+        autoInstall(fileInfo as FileInfo, depInstallPendingList);
+        previousDependencies = dependencies;
+      }
+    });
+  });
+}
+
 export function deactivate() {}
