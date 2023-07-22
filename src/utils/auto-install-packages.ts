@@ -19,16 +19,15 @@ export type DepTuple = [DepName, DepVersion];
 
 export const autoInstall = async (fileInfo: FileInfo, depOrList?: string | (DepTuple[]), version?: string) => {
   const path = transformPath(fileInfo.filePath);
-  // 读取Package.json文件
+  // read Package.json file
   const data = await vscode.workspace.fs.readFile(vscode.Uri.file(path));
   const packageJson = JSON.parse(data.toString());
-  // TODO:默认npm
   if (!packageJson.dependencies && !packageJson.devDependencies) {
-    return Promise.reject('没有任何可以安装的依赖，请检查您的package.json文件！');
+    return Promise.reject('no dependencies would be installed, please check your package.json file configuration!');
   }
-  // 生成依赖tree
-  // 安装依赖
-  // 生成命令
+  // generate dependencies tree
+  // install dependencies
+  // generate install command
   const commandStr = depOrList instanceof Array ? depOrList.reduce((pre, [depName, depVersion]) => pre + `${depName}@${depVersion} `, '') : `${depOrList}@${version}`
   const command = 'npm install ' + commandStr;
   const options = { cwd: fileInfo.rootPath };
@@ -39,7 +38,7 @@ export const autoInstall = async (fileInfo: FileInfo, depOrList?: string | (DepT
   terminal.show();
   vscode.window.onDidCloseTerminal((closedTerminal) => {
     if (closedTerminal === terminal) {
-      vscode.window.showInformationMessage('依赖安装完成!');
+      vscode.window.showInformationMessage('install finished!');
     }
 });
 };

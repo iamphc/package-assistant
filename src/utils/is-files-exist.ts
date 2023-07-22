@@ -12,13 +12,13 @@ type PathType = string;
  */
 const isFileExist = (filesName: string, workspaceFolders: readonly vscode.WorkspaceFolder[] | undefined): Promise<PathType|FileInfo> => {
   if (!filesName || !workspaceFolders) {
-    return Promise.reject('参数缺少！');
+    return Promise.reject('lack params!');
   }
   const nodeModulesPath = `${workspaceFolders?.[0]?.uri.fsPath}\\${filesName}`;
   return new Promise((resolve, reject) => {
     fs.access(nodeModulesPath, fs.constants.F_OK, (err: any) => {
       if (err) {
-        reject(`没找到${filesName}`);
+        reject(`not found ${filesName}`);
       };
       resolve({
         filePath: nodeModulesPath,

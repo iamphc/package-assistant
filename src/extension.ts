@@ -16,9 +16,9 @@ type FileInfo = {
 };
 
 /**
- * 校验依赖的格式是否正确
- * 参考：semantic versioning
- * 参考标准网址：https://semver.org
+ * dependencies valid or not
+ * reference：semantic versioning
+ * reference website：https://semver.org
  * @param dependency 
  * @returns 
  */

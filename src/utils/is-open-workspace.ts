@@ -10,7 +10,7 @@ const isOpenWorkSpace = (): Promise<any> => {
   if (workspaceFolders) {
     return Promise.resolve(workspaceFolders);
   }
-  return Promise.reject('未打开工作区');
+  return Promise.reject('workspace not founding!');
 };
 
 export default isOpenWorkSpace;
