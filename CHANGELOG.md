@@ -1,9 +1,16 @@
-# Change Log
+# Changelog
 
-All notable changes to the "package-assistant" extension will be documented in this file.
+All notable changes to this project will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [1.0.1] - 2023-07-23
 
-## [Unreleased]
+### Added
+- Plugin's cover.
 
-- Initial release
+## [1.0.0] - 2023-07-23
+
+### Added
+- Initial project
+
+### Feature
+- Project's dependencies would change while user edit dependency' version in package.json.
