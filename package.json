@@ -50,5 +50,6 @@
     "type": "git",
     "url": "https://github.com/iamphc/package-assistant"
   },
-  "publisher": "iamphc"
+  "publisher": "iamphc",
+  "icon": "cover.png"
 }
