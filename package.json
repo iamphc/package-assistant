@@ -2,7 +2,7 @@
   "name": "package-assistant",
   "displayName": "package-assistant",
   "description": "assistant for your package.json, valid , install and fine-grained control",
-  "version": "1.0.1-beta.1",
+  "version": "1.0.2",
   "engines": {
     "vscode": "^1.80.0"
   },
